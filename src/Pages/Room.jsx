@@ -42,9 +42,10 @@ const Room = () => {
         setMessages(response.documents)
     } 
 
-
-
-
+    const deleteMessage=async(message_id)=>{
+        const promise = databases.deleteDocument('[DATABASE_ID]', '[COLLECTION_ID]', '[DOCUMENT_ID]');
+    }
+   
   return (
     <main className='container'>
 
