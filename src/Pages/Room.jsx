@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import { COLLECTION_ID_MESSAGES, DATABASE_ID, databases } from '../appwriteConfig'
-import {ID} from 'appwrite' //used to create unique document id
+import {ID, Query} from 'appwrite' //used to create unique document id
 
 const Room = () => {
     
@@ -22,14 +22,22 @@ const Room = () => {
             COLLECTION_ID_MESSAGES,
             ID.unique(),
             payload  //object for creating a document
-
+           
         )
         console.log("Created!",response)
+        setMessages(previous=>[response,...messages])
         setMessageBody('') //after sending we're reseting that messageBody field
     }
 
     const getMessage =async()=>{
-        const response=await databases.listDocuments(DATABASE_ID,COLLECTION_ID_MESSAGES);
+        const response=await databases.listDocuments(
+            DATABASE_ID,
+            COLLECTION_ID_MESSAGES,
+            [
+                Query.orderDesc('$createdAt'),
+                Query.limit(20)
+            ]  //Additonal parameter to show,in this we can sort this in descending based on the time 
+            );
         console.log(response);
         setMessages(response.documents)
     } 
