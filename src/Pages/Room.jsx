@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react'
 import { COLLECTION_ID_MESSAGES, DATABASE_ID, databases } from '../appwriteConfig'
 import {ID, Query} from 'appwrite' //used to create unique document id
+import { Trash2 } from 'react-feather'
 
 const Room = () => {
     
@@ -43,7 +44,8 @@ const Room = () => {
     } 
 
     const deleteMessage=async(message_id)=>{
-        const promise = databases.deleteDocument('[DATABASE_ID]', '[COLLECTION_ID]', '[DOCUMENT_ID]');
+        databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
+        setMessages(prevState=>messages.filter(message=>message.$id!==message_id));
     }
    
   return (
@@ -69,8 +71,11 @@ const Room = () => {
                     <div key={message.$id} className='message--wrapper'>
                         <div className='message--header'>
                             <small className='message-timestamp'>
-                                {message.$createdAt}
+                                {new Date(message.$createdAt).toLocaleString()}
                             </small>
+                            <Trash2 
+                            onClick={()=>{deleteMessage(message.$id)}}
+                            className='delete--btn'/>
                         </div>
                         <div className='message--body'>
                             <span >{message.body}</span>
