@@ -5,6 +5,7 @@ import PrivateRoutes from './components/PrivateRoutes';
 import Room from './Pages/Room'
 import LoginPage from './Pages/Login/LoginPage';
 import { AuthProvider } from './utils/AuthContext';
+import Register from './Pages/Register/Register';
 
 function App() {
   return (
@@ -12,8 +13,9 @@ function App() {
       <AuthProvider>
       <Routes>
         <Route path='/login' element={<LoginPage/>}/>
+        <Route path='/register' element={<Register/>}/>
         <Route element={<PrivateRoutes/>}>  //Outlet is used to create a private router only loads on login
-          <Route path='/' element={<Room/>} />
+        <Route path='/' element={<Room/>} />
         </Route>
       </Routes>
       </AuthProvider>
