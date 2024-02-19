@@ -1,11 +1,14 @@
 import React,{useState,useEffect} from 'react'
 import client,{ COLLECTION_ID_MESSAGES, DATABASE_ID, databases } from '../appwriteConfig'
-import {ID, Query} from 'appwrite' //used to create unique document id
+import {ID, Query,Role,Permission} from 'appwrite' //used to create unique document id
 import { Trash2 } from 'react-feather'
 import Header from '../components/Header'
+import { useAuth } from '../utils/AuthContext'
 
 const Room = () => {
     
+    const {user} = useAuth();
+
     const [messages,setMessages]=useState([]);
     const [messageBody,setMessageBody]=useState('');
 
@@ -31,14 +34,19 @@ const Room = () => {
     const handleSubmit=async(e)=>{
         e.preventDefault();
         let payload={
+            user_id:user.$id,
+            username:user.name,
             body:messageBody
         }
-
+        let permissions=[
+            Permission.write(Role.user(user.$id))
+        ]
         let response=await databases.createDocument(
             DATABASE_ID,
             COLLECTION_ID_MESSAGES,
             ID.unique(),
-            payload  //object for creating a document
+            payload,  //object for creating a document
+            permissions
            
         )
         // console.log("Created!",response)
@@ -86,12 +94,24 @@ const Room = () => {
                 {messages.map(message=>(
                     <div key={message.$id} className='message--wrapper'>
                         <div className='message--header'>
-                            <small className='message-timestamp'>
+                            <p>
+                                {message?.username ? (
+                                    <span>
+                                        {message.username}
+                                    </span>
+                                ):(
+                                    <span>Anonymous user</span>
+                                )}
+                                <small className='message-timestamp'>
                                 {new Date(message.$createdAt).toLocaleString()}
                             </small>
-                            <Trash2 
-                            onClick={()=>{deleteMessage(message.$id)}}
-                            className='delete--btn'/>
+                            </p>
+                            {message.$permissions.includes(`delete(\"user:${user.$id}\")`) && (
+                                <Trash2 
+                                onClick={()=>{deleteMessage(message.$id)}}
+                                className='delete--btn'/>
+                            )}
+                            
                         </div>
                         <div className='message--body'>
                             <span >{message.body}</span>

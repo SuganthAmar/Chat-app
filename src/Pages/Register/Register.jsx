@@ -63,7 +63,7 @@ const Register = () => {
             <input type="submit" className='btn btn--lg btn--main' value="Register" />
           </div>
         </form>
-        <p>Already have an account? Login <Link to="/login">here</Link></p>
+        <p className='formpara'>Already have an account? <Link to="/login">Login here</Link></p>
       </div>
     </div>
   )

@@ -47,7 +47,7 @@ const LoginPage = () => {
             <input type="submit" className='btn btn--lg btn--main' value="Login" />
           </div>
         </form>
-        <p>Don't have an account? Register <Link to="/register">here</Link></p>
+        <p className='formpara'>Don't have an account? <Link to="/register">Register here</Link></p>
       </div>
     </div>
   )
