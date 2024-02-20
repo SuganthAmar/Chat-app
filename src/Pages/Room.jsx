@@ -16,13 +16,13 @@ const Room = () => {
         getMessage();
         const unsubscribe=client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`, response => {
             // Callback will be executed on changes for documents A and all files.
-            console.log("RealTime",response);
+            // console.log("RealTime",response);
             if(response.events.includes("databases.*.collections.*.documents.*.create")){
-                console.log("A MESSAGE IS CREATED");
-                setMessages(previous=>[response.payload,...previous])
+                // console.log("A MESSAGE IS CREATED");
+                setMessages(previous=>[response.payload, ...previous])
             }
             if(response.events.includes("databases.*.collections.*.documents.*.delete")){
-                console.log("A MESSAGE IS DELETED");
+                // console.log("A MESSAGE IS DELETED");
                 setMessages(prevState=>messages.filter(message=>message.$id!==response.payload.$id));
             }
         });
@@ -33,15 +33,15 @@ const Room = () => {
 
     const handleSubmit=async(e)=>{
         e.preventDefault();
-        let payload={
+        const payload={
             user_id:user.$id,
             username:user.name,
             body:messageBody
         }
-        let permissions=[
-            Permission.write(Role.user(user.$id))
+        const permissions=[
+            Permission.write(Role.user(user.$id)),
         ]
-        let response=await databases.createDocument(
+        const response=await databases.createDocument(
             DATABASE_ID,
             COLLECTION_ID_MESSAGES,
             ID.unique(),
@@ -60,14 +60,15 @@ const Room = () => {
             COLLECTION_ID_MESSAGES,
             [
                 Query.orderDesc('$createdAt'),
-                Query.limit(20)
+                Query.limit(100),
             ]  //Additonal parameter to show,in this we can sort this in descending based on the time 
             );
-        console.log(response);
+        // console.log(response);
         setMessages(response.documents)
     } 
 
     const deleteMessage=async(message_id)=>{
+        e.preventDefault();
         databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
         // setMessages(prevState=>messages.filter(message=>message.$id!==message_id));
     }
