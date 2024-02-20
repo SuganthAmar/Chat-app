@@ -2,6 +2,8 @@ import { createContext,useState,useEffect, Children, useContext } from "react";
 import { account } from "../appwriteConfig";
 import { useNavigate } from "react-router-dom";
 import { ID } from "appwrite";
+import ReactLoading from "react-loading";
+import './Loading.css'
 
 const AuthContext = createContext();
 export const AuthProvider=({children})=>{
@@ -69,7 +71,18 @@ export const AuthProvider=({children})=>{
         handleRegister
     }
     return <AuthContext.Provider value={contextData}>
-        {loading? <p>Loading....</p>: children}
+        {loading? (
+        <div className="loading-container">
+        <ReactLoading
+          type="spinningBubbles"
+          color="#db934b"
+          height={200}
+          width={100}
+        />
+      </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
 
 }

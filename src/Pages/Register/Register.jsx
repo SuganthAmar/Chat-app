@@ -18,6 +18,7 @@ const Register = () => {
   return (
     <div className='auth--container'>
       <div className="form--wrapper">
+      <h1 className='loginheader'>Register</h1>
         <form onSubmit={(e)=>{handleRegister(e,credentials)}}>
         <div className="field--wrapp">
             <label>Name:</label>
