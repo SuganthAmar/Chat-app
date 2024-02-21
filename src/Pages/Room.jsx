@@ -68,8 +68,8 @@ const Room = () => {
     } 
 
     const deleteMessage=async(message_id)=>{
-        getMessage();
         databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
+        getMessage();
         // setMessages(prevState=>messages.filter(message=>message.$id!==message_id));
     }
    
