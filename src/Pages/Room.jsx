@@ -11,7 +11,12 @@ const Room = () => {
 
     const [messages,setMessages]=useState([]);
     const [messageBody,setMessageBody]=useState('');
+    // console.log("mess,",messages);
 
+    useEffect(() => {
+        console.log("Messages updated:", messages);
+    }, [messages]);
+    
     useEffect(()=>{
         getMessage();
         const unsubscribe=client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`, response => {
@@ -30,7 +35,7 @@ const Room = () => {
             unsubscribe();//clean up function to useEffect to avoid creating multiple session so we creating and unsubscribing;
         }
     },[])
-
+    
     const handleSubmit=async(e)=>{
         e.preventDefault();
         const payload={
@@ -47,9 +52,10 @@ const Room = () => {
             ID.unique(),
             payload,  //object for creating a document
             permissions
-           
-        )
-        // console.log("Created!",response)
+            
+            )
+            getMessage();
+            // console.log("Created!",response)
         // setMessages(previous=>[response,...messages])
         setMessageBody('') //after sending we're reseting that messageBody field
     }
@@ -63,17 +69,40 @@ const Room = () => {
                 Query.limit(100),
             ]  //Additonal parameter to show,in this we can sort this in descending based on the time 
             );
-        // console.log(response);
-        setMessages(response.documents)
-    } 
-
-    const deleteMessage=async(message_id)=>{
-        databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
-        getMessage();
-        // setMessages(prevState=>messages.filter(message=>message.$id!==message_id));
+            console.log(response);
+            setMessages(response.documents)
+        } 
+        
+        // const deleteMessage = async (message_id)=>{
+            //     databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
+            //     await getMessage();
+            //     setTimeout(() => {
+                
+                //     }, timeout);
+                //     // setMessages(prevState=>messages.filter(message=>message.$id!==message_id));
+    // }   
+    
+    const deleteMessage = async (message_id) => {
+        console.log("Deleting message:", message_id);
+        await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, message_id);
+        console.log("Message deleted:", message_id);
+        
+        // Update state using functional update to ensure correct closure over messages state
+        setMessages(prevMessages => {
+            console.log("Prev messages:", prevMessages);
+            return prevMessages.filter(message => {
+                console.log("Checking message:", message);
+                return message.$id !== message_id;
+            });
+        });
     }
-   
-  return (
+    
+    
+    
+  
+    return (
+
+
     <main className='container'>
         <Header/>
         <div className='room--container'>
